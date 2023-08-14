@@ -28,10 +28,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:contentDescription="@string/there_is_photo_of_person"
-                tools:src="@drawable/female1" />
+                tools:src="@drawable/me_avatar" />
 
         </androidx.cardview.widget.CardView>
-
 
         <TextView
             android:id="@+id/person_name"
@@ -42,7 +41,7 @@
             android:textSize="18sp"
             app:layout_constraintStart_toEndOf="@+id/card_view_avatar"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="Kate Lebovski" />
+            tools:text="Someone" />
 
         <TextView
             android:id="@+id/person_distance"
@@ -61,7 +60,7 @@
             android:layout_marginStart="10dp"
             app:layout_constraintStart_toEndOf="@id/person_distance"
             app:layout_constraintTop_toTopOf="@id/person_distance"
-            tools:text="23.212223"
+            tools:text="2323231"
             android:textSize="16sp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

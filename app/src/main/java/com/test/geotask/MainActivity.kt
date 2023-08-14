@@ -7,9 +7,11 @@ import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
 import android.os.Looper
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.cardview.widget.CardView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
@@ -26,11 +28,19 @@ import com.test.geotask.Settings.Companion.CUSTOM_PERMISSIONS_REQUEST_BACKGROUND
 import com.test.geotask.Settings.Companion.CUSTOM_PERMISSIONS_REQUEST_LOCATION
 import kotlinx.coroutines.launch
 
-class MainActivity : AppCompatActivity() {
+
+class MainActivity : AppCompatActivity(), PersonClickListener {
 
     private lateinit var recyclerViewPeople: RecyclerView
     private lateinit var peopleAdapter: PeopleAdapter
     private lateinit var peopleViewModel: PeopleViewModel
+
+    private lateinit var mainPersonView: CardView
+    private lateinit var mainPersonName: TextView
+    private lateinit var mainPersonDistance: TextView
+    private lateinit var mainPersonAvatar: ImageView
+    private var mainLatitude = 0f
+    private var mainLongitude = 0f
 
     private var fusedLocationProvider: FusedLocationProviderClient? = null
     private val locationRequest: LocationRequest = LocationRequest.Builder(
@@ -60,6 +70,11 @@ class MainActivity : AppCompatActivity() {
 
         fusedLocationProvider = LocationServices.getFusedLocationProviderClient(this)
 
+        mainPersonView = findViewById(R.id.main_card_view)
+        mainPersonAvatar = findViewById(R.id.main_person_avatar)
+        mainPersonDistance = findViewById(R.id.main_person_distance_data)
+        mainPersonName = findViewById(R.id.main_person_name)
+
         recyclerViewPeople = findViewById(R.id.rv_list_of_people)
         recyclerViewPeople.layoutManager = LinearLayoutManager(this)
 
@@ -67,24 +82,44 @@ class MainActivity : AppCompatActivity() {
             PeopleRepository()
         )
 
+        peopleAdapter = PeopleAdapter(emptyList(), this)
+        recyclerViewPeople.adapter = peopleAdapter
+
         if (
             ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
             == PackageManager.PERMISSION_GRANTED
-        ){
+        ) {
             val locationManager = this.getSystemService(Context.LOCATION_SERVICE) as LocationManager
             val location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-            val me = personList.find { it.id == 0 }!!
-            me.latitude = location?.latitude?.toFloat()!!
-            me.longitude = location.longitude.toFloat()
-            peopleViewModel.onLocationReceived(personList[0].longitude, personList[0].latitude)
+//            me.latitude = location?.latitude?.toFloat()!!
+//            me.longitude = location.longitude.toFloat()
+            mainLatitude = 30f
+            mainLongitude = 50f
+            peopleViewModel.onLocationReceived(mainLongitude, mainLatitude)
         }
 
         lifecycleScope.launch {
-            peopleViewModel.personListFlow.collect {
-                peopleAdapter = PeopleAdapter(it)
-                recyclerViewPeople.adapter = peopleAdapter
+            peopleViewModel.uiState.collect {
+                peopleAdapter.updateList(it.peopleList.filter { person -> person.id != it.selectedPersonId })
+
+                it.peopleList.find { person -> person.id == it.selectedPersonId }?.let {
+                    mainPersonName.text = it.name
+                    mainPersonDistance.text = it.distance
+                    mainPersonAvatar.setImageResource(it.avatar)
+                }
             }
         }
+
+        lifecycleScope.launch {
+            peopleViewModel.newDistance.collect{
+                peopleAdapter.updateList(it)
+            }
+        }
+
+        mainPersonView.setOnClickListener {
+            peopleViewModel.selectPerson()
+        }
+
     }
 
     override fun onResume() {
@@ -121,13 +156,6 @@ class MainActivity : AppCompatActivity() {
         ) {
             requestLocationPermission()
         } else checkBackgroundLocation()
-        // TODO: Consider calling
-        //    ActivityCompat#requestPermissions
-        // here to request the missing permissions, and then overriding
-        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-        //                                          int[] grantResults)
-        // to handle the case where the user grants the permission. See the documentation
-        // for ActivityCompat#requestPermissions for more details.
     }
 
     private fun requestLocationPermission() {
@@ -183,11 +211,12 @@ class MainActivity : AppCompatActivity() {
                             locationCallback,
                             Looper.getMainLooper()
                         )
-                        val locationManager = this.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-                        val location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-                        val me = personList.find { it.id == 0 }!!
-                        me.latitude = location?.latitude?.toFloat()!!
-                        me.longitude = location.longitude.toFloat()
+                        val locationManager =
+                            this.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+                        val location =
+                            locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+                        mainLatitude = location?.latitude?.toFloat()!!
+                        mainLongitude = location.longitude.toFloat()
                         println("GEO DATA = lat (${personList[0].latitude}), lon(${personList[0].longitude})")
                         checkBackgroundLocation()
                     }
@@ -221,11 +250,12 @@ class MainActivity : AppCompatActivity() {
                             locationCallback,
                             Looper.getMainLooper()
                         )
-                        val locationManager = this.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-                        val location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-                        val me = personList.find { it.id == 0 }!!
-                        me.latitude = location?.latitude?.toFloat()!!
-                        me.longitude = location.longitude.toFloat()
+                        val locationManager =
+                            this.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+                        val location =
+                            locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+                        mainLatitude = location?.latitude?.toFloat()!!
+                        mainLongitude = location.longitude.toFloat()
                         println("GEO DATA = lat (${personList[0].latitude}), lon(${personList[0].longitude})")
                     }
                 } else {
@@ -239,6 +269,10 @@ class MainActivity : AppCompatActivity() {
                 return
             }
         }
+    }
+
+    override fun onItemClickListener(person: Person) {
+        peopleViewModel.selectPerson(person.id)
     }
 
 }

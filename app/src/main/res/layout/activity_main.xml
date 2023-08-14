@@ -17,15 +17,86 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/main_card_view"
+        app:layout_constraintTop_toBottomOf="@id/text_list_of_people"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="10dp"
+        app:cardCornerRadius="15dp"
+        android:elevation="8dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/main_avatar"
+                android:elevation="0dp"
+                android:layout_width="105dp"
+                android:layout_height="105dp"
+                app:cardCornerRadius="10dp"
+                android:layout_margin="5dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:id="@+id/main_person_avatar"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@string/there_is_photo_of_person"
+                    android:src="@drawable/me_avatar" />
+
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:id="@+id/main_person_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="20dp"
+                android:textSize="18sp"
+                app:layout_constraintStart_toEndOf="@+id/main_avatar"
+                app:layout_constraintTop_toTopOf="parent"
+                android:text="Me" />
+
+            <TextView
+                android:id="@+id/main_person_distance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="@id/main_person_name"
+                app:layout_constraintTop_toBottomOf="@id/main_person_name"
+                android:layout_marginTop="20dp"
+                android:textSize="16sp"
+                android:text="@string/distance" />
+
+            <TextView
+                android:id="@+id/main_person_distance_data"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                app:layout_constraintStart_toEndOf="@id/main_person_distance"
+                app:layout_constraintTop_toTopOf="@id/main_person_distance"
+                android:text="0 m"
+                android:textSize="16sp" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_list_of_people"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/text_list_of_people"
+        app:layout_constraintTop_toBottomOf="@id/main_card_view"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="10dp"
         android:layout_marginBottom="50dp" />
 
 

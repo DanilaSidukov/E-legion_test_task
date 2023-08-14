@@ -2,71 +2,101 @@ package com.test.geotask
 
 import android.location.Location
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlin.random.Random
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 interface AppLocationManager {
     suspend fun onLocationReceived(longitude: Float, latitude: Float)
 }
 
 
-class PeopleRepository(): AppLocationManager {
+class PeopleRepository : AppLocationManager {
 
-    private val random = Random
+    var shouldRequestData = true
 
-    private val _listOfPeopleFlow: MutableSharedFlow<List<PeopleItem>> = MutableSharedFlow()
-    var listOfPeopleFlow = _listOfPeopleFlow.asSharedFlow()
+    private var targetLongitude: Float? = null
+    private var targetLatitude: Float? = null
 
-    var isDistanceChangeable = true
+    private var targetId: Int = 0
+
+    val listOfPeopleFlow: Flow<List<Person>> =
+        flow {
+            while (true) {
+                if (targetLatitude != null && targetLongitude != null && shouldRequestData) {
+                    var targetPerson = personList.find { it.id == targetId }!!
+                    println("target = $targetPerson")
+                    if (targetPerson.id == 0){
+                        targetPerson.latitude = targetLatitude!!
+                        targetPerson.longitude = targetLongitude!!
+                    }
+                    emit(
+                        personList.onEach { person ->
+                            val result = floatArrayOf(0f)
+                            if (person != targetPerson){
+                                person.latitude = generateRandomLatitude()
+                                person.longitude = generateRandomLongitude()
+                                Location.distanceBetween(
+                                    targetPerson.latitude.toDouble(),
+                                    targetPerson.longitude.toDouble(),
+                                    person.latitude.toDouble(),
+                                    person.longitude.toDouble(),
+                                    result
+                                )
+                                person.distance = "%.${0}f".format(result[0]) + " m"
+                            } else {
+                                targetPerson.distance = "0 m"
+                            }
+//                            if (person.id != 0){
+//                                person.latitude = generateRandomLatitude()
+//                                person.longitude = generateRandomLongitude()
+//                                Location.distanceBetween(
+//                                    targetLatitude!!.toDouble(),
+//                                    targetLongitude!!.toDouble(),
+//                                    person.latitude.toDouble(),
+//                                    person.longitude.toDouble(),
+//                                    result
+//                                )
+//                            } else {
+//                                Location.distanceBetween(
+//                                    targetLatitude!!.toDouble(),
+//                                    targetLongitude!!.toDouble(),
+//                                    person.latitude.toDouble(),
+//                                    person.longitude.toDouble(),
+//                                    result
+//                                )
+//                            }
+//                            person.distance = "%.${0}f".format(result[0]) + " m"
+                        }
+                    )
+                    delay(3000)
+                } else delay(100)
+            }
+        }
 
     override suspend fun onLocationReceived(longitude: Float, latitude: Float) {
-        while (true) {
-            val chosenPerson = personList.find { it.isPersonChosen } ?: personList[0]
-            println("chosen = $chosenPerson")
-            for (person in personList) {
-                if (person.id == 0 && !person.isPersonChosen) {
-                    val result = FloatArray(1)
-                    Location.distanceBetween(
-                        chosenPerson.latitude.toDouble(),
-                        chosenPerson.longitude.toDouble(),
-                        person.latitude.toDouble(),
-                        person.longitude.toDouble(),
-                        result
-                    )
-                    person.distance = "%.${0}f".format(result[0]) + " m"
-                } else if (person.id != 0) {
-                    val result = FloatArray(1)
-                    person.latitude = generateRandomLatitude(random)
-                    person.longitude = generateRandomLongitude(random)
-                    Location.distanceBetween(
-                        chosenPerson.latitude.toDouble(),
-                        chosenPerson.longitude.toDouble(),
-                        person.latitude.toDouble(),
-                        person.longitude.toDouble(),
-                        result
-                    )
-                    person.distance = "%.${0}f".format(result[0]) + " m"
-                }
-            }
-            _listOfPeopleFlow.emit(personList)
-//            if (chosenPerson.id != 0) isDistanceChangeable = false
-//            else isDistanceChangeable = true
-            delay(3000)
-        }
+        targetLatitude = latitude
+        targetLongitude = longitude
     }
 
-//    fun getListOfPeople(): Flow<List<PeopleItem>> = flow {
-//        while (true){
-//            for (person in personList){
-//                if (person.id != 0){
-//                    person.latitude = generateRandomLatitude(random)
-//                    person.longitude = generateRandomLongitude(random)
-//                }
-//            }
-//            emit(personList)
-//            delay(3000)
-//        }
-//    }
+    fun setTargetId(id: Int = 0){
+        targetId = id
+    }
 
+    val targetFlow = fun(target: Person, persons: List<Person>) = flow<List<Person>>{
+        emit(
+            personList.onEach { person ->
+                val result = floatArrayOf(0f)
+                person.latitude = generateRandomLatitude()
+                person.longitude = generateRandomLongitude()
+                Location.distanceBetween(
+                    target.latitude.toDouble(),
+                    target.longitude.toDouble(),
+                    person.latitude.toDouble(),
+                    person.longitude.toDouble(),
+                    result
+                )
+                person.distance = "%.${0}f".format(result[0]) + " m"
+            }
+        )
+    }
 }
