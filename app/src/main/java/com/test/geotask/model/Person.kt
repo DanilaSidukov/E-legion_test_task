@@ -1,4 +1,6 @@
-package com.test.geotask
+package com.test.geotask.model
+
+import com.test.geotask.R
 
 data class Person(
     val id: Int,

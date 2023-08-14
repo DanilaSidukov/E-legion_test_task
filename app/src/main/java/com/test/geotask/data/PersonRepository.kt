@@ -1,6 +1,10 @@
-package com.test.geotask
+package com.test.geotask.data
 
 import android.location.Location
+import com.test.geotask.model.Person
+import com.test.geotask.model.personList
+import com.test.geotask.utils.generateRandomLatitude
+import com.test.geotask.utils.generateRandomLongitude
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -24,7 +28,6 @@ class PeopleRepository : AppLocationManager {
             while (true) {
                 if (targetLatitude != null && targetLongitude != null && shouldRequestData) {
                     var targetPerson = personList.find { it.id == targetId }!!
-                    println("target = $targetPerson")
                     if (targetPerson.id == 0){
                         targetPerson.latitude = targetLatitude!!
                         targetPerson.longitude = targetLongitude!!
@@ -46,26 +49,6 @@ class PeopleRepository : AppLocationManager {
                             } else {
                                 targetPerson.distance = "0 m"
                             }
-//                            if (person.id != 0){
-//                                person.latitude = generateRandomLatitude()
-//                                person.longitude = generateRandomLongitude()
-//                                Location.distanceBetween(
-//                                    targetLatitude!!.toDouble(),
-//                                    targetLongitude!!.toDouble(),
-//                                    person.latitude.toDouble(),
-//                                    person.longitude.toDouble(),
-//                                    result
-//                                )
-//                            } else {
-//                                Location.distanceBetween(
-//                                    targetLatitude!!.toDouble(),
-//                                    targetLongitude!!.toDouble(),
-//                                    person.latitude.toDouble(),
-//                                    person.longitude.toDouble(),
-//                                    result
-//                                )
-//                            }
-//                            person.distance = "%.${0}f".format(result[0]) + " m"
                         }
                     )
                     delay(3000)
@@ -78,16 +61,10 @@ class PeopleRepository : AppLocationManager {
         targetLongitude = longitude
     }
 
-    fun setTargetId(id: Int = 0){
-        targetId = id
-    }
-
     val targetFlow = fun(target: Person, persons: List<Person>) = flow<List<Person>>{
         emit(
             personList.onEach { person ->
                 val result = floatArrayOf(0f)
-                person.latitude = generateRandomLatitude()
-                person.longitude = generateRandomLongitude()
                 Location.distanceBetween(
                     target.latitude.toDouble(),
                     target.longitude.toDouble(),

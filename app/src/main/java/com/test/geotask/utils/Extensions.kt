@@ -1,4 +1,4 @@
-package com.test.geotask
+package com.test.geotask.utils
 
 import kotlin.random.Random
 

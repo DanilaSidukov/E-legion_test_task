@@ -1,12 +1,13 @@
-package com.test.geotask
+package com.test.geotask.ui
 
 import android.Manifest
-import android.content.Context
 import android.content.pm.PackageManager
-import android.location.LocationManager
+import android.location.Criteria
+import android.location.Location
 import android.os.Build
 import android.os.Bundle
 import android.os.Looper
+import android.util.Log
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -19,13 +20,17 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationListener
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationRequest.Builder.IMPLICIT_MIN_UPDATE_INTERVAL
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
-import com.test.geotask.Settings.Companion.CUSTOM_PERMISSIONS_REQUEST_BACKGROUND_LOCATION
-import com.test.geotask.Settings.Companion.CUSTOM_PERMISSIONS_REQUEST_LOCATION
+import com.test.geotask.R
+import com.test.geotask.data.PeopleRepository
+import com.test.geotask.data.Settings.Companion.CUSTOM_PERMISSIONS_REQUEST_BACKGROUND_LOCATION
+import com.test.geotask.data.Settings.Companion.CUSTOM_PERMISSIONS_REQUEST_LOCATION
+import com.test.geotask.model.Person
 import kotlinx.coroutines.launch
 
 
@@ -89,12 +94,18 @@ class MainActivity : AppCompatActivity(), PersonClickListener {
             ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
             == PackageManager.PERMISSION_GRANTED
         ) {
-            val locationManager = this.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-            val location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-//            me.latitude = location?.latitude?.toFloat()!!
-//            me.longitude = location.longitude.toFloat()
-            mainLatitude = 30f
-            mainLongitude = 50f
+            getLocation()
+
+            val criteria = Criteria()
+            criteria.accuracy = Criteria.ACCURACY_COARSE
+            criteria.powerRequirement = Criteria.POWER_LOW
+            criteria.isAltitudeRequired = false
+            criteria.isBearingRequired = false
+            criteria.isSpeedRequired = false
+            criteria.isCostAllowed = true
+            criteria.horizontalAccuracy = Criteria.ACCURACY_HIGH
+            criteria.verticalAccuracy = Criteria.ACCURACY_HIGH
+
             peopleViewModel.onLocationReceived(mainLongitude, mainLatitude)
         }
 
@@ -211,13 +222,7 @@ class MainActivity : AppCompatActivity(), PersonClickListener {
                             locationCallback,
                             Looper.getMainLooper()
                         )
-                        val locationManager =
-                            this.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-                        val location =
-                            locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-                        mainLatitude = location?.latitude?.toFloat()!!
-                        mainLongitude = location.longitude.toFloat()
-                        println("GEO DATA = lat (${personList[0].latitude}), lon(${personList[0].longitude})")
+                        getLocation()
                         checkBackgroundLocation()
                     }
                 } else {
@@ -250,13 +255,7 @@ class MainActivity : AppCompatActivity(), PersonClickListener {
                             locationCallback,
                             Looper.getMainLooper()
                         )
-                        val locationManager =
-                            this.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-                        val location =
-                            locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-                        mainLatitude = location?.latitude?.toFloat()!!
-                        mainLongitude = location.longitude.toFloat()
-                        println("GEO DATA = lat (${personList[0].latitude}), lon(${personList[0].longitude})")
+                        getLocation()
                     }
                 } else {
                     Toast.makeText(
@@ -267,6 +266,29 @@ class MainActivity : AppCompatActivity(), PersonClickListener {
                     this.finish()
                 }
                 return
+            }
+        }
+    }
+
+    fun getLocation() {
+        LocationListener {
+            fun onLocationChanged(location: Location) {
+                val location = location
+                Log.d("Location Changes", location.toString())
+                mainLatitude = location.latitude.toFloat()
+                mainLongitude = location.longitude.toFloat()
+            }
+
+            fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
+                Log.d("Status Changed", status.toString())
+            }
+
+            fun onProviderEnabled(provider: String?) {
+                Log.d("Provider Enabled", provider!!)
+            }
+
+            fun onProviderDisabled(provider: String?) {
+                Log.d("Provider Disabled", provider!!)
             }
         }
     }

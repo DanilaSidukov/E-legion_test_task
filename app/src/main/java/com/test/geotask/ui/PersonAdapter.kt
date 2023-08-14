@@ -1,14 +1,13 @@
-package com.test.geotask
+package com.test.geotask.ui
 
-import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.shuhart.stickyheader.StickyAdapter
-import java.util.Collections
+import com.test.geotask.R
+import com.test.geotask.model.Person
 
 class PeopleAdapter(
     private var list: List<Person>,
@@ -18,12 +17,12 @@ class PeopleAdapter(
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): PeopleAdapter.ViewHolder {
+    ): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.people_item, parent, false)
         return ViewHolder(view)
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, @SuppressLint("RecyclerView") position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
         val person = list[position]
 

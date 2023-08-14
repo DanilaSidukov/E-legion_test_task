@@ -1,10 +1,11 @@
-package com.test.geotask
+package com.test.geotask.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.test.geotask.data.PeopleRepository
+import com.test.geotask.model.Person
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
