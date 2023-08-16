@@ -1,6 +1,6 @@
-package com.test.geotask.model
+package com.test.elegiontesttask.model
 
-import com.test.geotask.R
+import com.test.elegiontesttask.R
 
 data class Person(
     val id: Int,

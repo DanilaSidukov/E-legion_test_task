@@ -1,4 +1,4 @@
-package com.test.geotask.ui
+package com.test.elegiontesttask.ui
 
 import android.Manifest
 import android.content.pm.PackageManager
@@ -26,11 +26,11 @@ import com.google.android.gms.location.LocationRequest.Builder.IMPLICIT_MIN_UPDA
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
-import com.test.geotask.R
-import com.test.geotask.data.PeopleRepository
-import com.test.geotask.data.Settings.Companion.CUSTOM_PERMISSIONS_REQUEST_BACKGROUND_LOCATION
-import com.test.geotask.data.Settings.Companion.CUSTOM_PERMISSIONS_REQUEST_LOCATION
-import com.test.geotask.model.Person
+import com.test.elegiontesttask.R
+import com.test.elegiontesttask.data.PeopleRepository
+import com.test.elegiontesttask.data.Settings.Companion.CUSTOM_PERMISSIONS_REQUEST_BACKGROUND_LOCATION
+import com.test.elegiontesttask.data.Settings.Companion.CUSTOM_PERMISSIONS_REQUEST_LOCATION
+import com.test.elegiontesttask.model.Person
 import kotlinx.coroutines.launch
 
 

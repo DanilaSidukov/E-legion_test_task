@@ -1,4 +1,4 @@
-package com.test.geotask
+package com.test.elegiontesttask
 
 import org.junit.Test
 

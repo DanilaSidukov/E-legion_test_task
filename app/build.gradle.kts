@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.test.geotask"
+    namespace = "com.test.elegiontesttask"
     compileSdk = 33
 
     defaultConfig {
-        applicationId = "com.test.geotask"
+        applicationId = "com.test.elegiontesttask"
         minSdk = 21
         targetSdk = 33
         versionCode = 1

@@ -1,4 +1,4 @@
-package com.test.geotask.data
+package com.test.elegiontesttask.data
 
 class Settings {
 

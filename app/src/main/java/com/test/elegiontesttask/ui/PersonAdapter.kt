@@ -1,4 +1,4 @@
-package com.test.geotask.ui
+package com.test.elegiontesttask.ui
 
 import android.view.LayoutInflater
 import android.view.View
@@ -6,8 +6,8 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.test.geotask.R
-import com.test.geotask.model.Person
+import com.test.elegiontesttask.R
+import com.test.elegiontesttask.model.Person
 
 class PeopleAdapter(
     private var list: List<Person>,

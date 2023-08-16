@@ -1,9 +1,9 @@
-package com.test.geotask.ui
+package com.test.elegiontesttask.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.test.geotask.data.PeopleRepository
-import com.test.geotask.model.Person
+import com.test.elegiontesttask.data.PeopleRepository
+import com.test.elegiontesttask.model.Person
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update

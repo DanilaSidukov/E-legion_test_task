@@ -1,10 +1,10 @@
-package com.test.geotask.data
+package com.test.elegiontesttask.data
 
 import android.location.Location
-import com.test.geotask.model.Person
-import com.test.geotask.model.personList
-import com.test.geotask.utils.generateRandomLatitude
-import com.test.geotask.utils.generateRandomLongitude
+import com.test.elegiontesttask.model.Person
+import com.test.elegiontesttask.model.personList
+import com.test.elegiontesttask.utils.generateRandomLatitude
+import com.test.elegiontesttask.utils.generateRandomLongitude
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

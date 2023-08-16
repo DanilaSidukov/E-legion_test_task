@@ -15,5 +15,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "GeoTask"
+rootProject.name = "E-legion test task"
 include(":app")
